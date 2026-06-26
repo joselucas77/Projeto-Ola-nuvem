@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olá, Nuvem - Sorteio</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+  <main>
+    <h1 id="saudacao-titulo">Olá, Nuvem</h1>
+    <p id="status">Carregando a resposta do servidor...</p>
+
+    <div class="controles">
+      <input type="text" id="input-nome" placeholder="Digite seu nome">
+      <button id="btn-sorteio">Fazer Sorteio</button>
+    </div>
+
+    <div class="secao-sorteio">
+      <p id="resultado-sorteio">Nenhum número sorteado ainda.</p>
+    </div>
+
+    <!-- Link para voltar para a página de frases -->
+    <div class="navegacao">
+      <a href="index.html" class="link-pagina">⬅ Voltar para as Frases</a>
+    </div>
+  </main>
+
+  <script>
+    const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev/sorteio";
+
+    async function fazerSorteio() {
+      const status = document.getElementById("status");
+      const tituloElemento = document.getElementById("saudacao-titulo");
+      const resultadoElemento = document.getElementById("resultado-sorteio");
+      const nomeDigitado = document.getElementById("input-nome").value;
+
+      status.textContent = "Buscando...";
+      resultadoElemento.textContent = "Sorteando...";
+
+      try {
+        const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
+
+        const resposta = await fetch(urlCompleta);
+        const dados = await resposta.json();
+
+        // Atualiza a tela com os 3 dados: Saudação, Hora e Número
+        tituloElemento.textContent = dados.mensagem;
+        status.textContent = "Hora do servidor: " + dados.horaDoServidor;
+        resultadoElemento.textContent = `Número sorteado: ${dados.numero}`;
+
+      } catch (erro) {
+        status.textContent = "Erro na requisição. Confira a URL.";
+        resultadoElemento.textContent = "Erro ao buscar o sorteio.";
+      }
+    }
+
+    document.getElementById("btn-sorteio").addEventListener("click", fazerSorteio);
+    fazerSorteio(); // Faz uma busca inicial ao carregar a página
+  </script>
+</body>
+
+</html>
