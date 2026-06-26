@@ -10,55 +10,79 @@
 
 <body>
   <main>
-    <!-- Adicionamos o id "saudacao-titulo" para podermos mudar esse texto -->
+    <!-- SEÇÃO 1: Hora e Frase -->
     <h1 id="saudacao-titulo">Olá, Nuvem</h1>
     <p id="status">Carregando a resposta do servidor...</p>
-
     <p id="frase-do-dia"></p>
 
-    <!-- Novo campo de input para o usuário digitar o nome -->
     <div class="controles">
       <input type="text" id="input-nome" placeholder="Digite seu nome">
-      <button id="btn">Buscar</button>
+      <!-- Mudamos o ID do botão para ficar mais claro -->
+      <button id="btn-hora">Buscar Hora</button>
+    </div>
+
+    <!-- SEÇÃO 2: Novo recurso de Sorteio -->
+    <div class="secao-sorteio">
+      <h2>Sorteio da Nuvem</h2>
+      <p id="resultado-sorteio">Clique para sortear um número de 1 a 100.</p>
+      <button id="btn-sorteio">Fazer Sorteio</button>
     </div>
   </main>
 
   <script>
-    const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev/";
+    // Note que removi a barra "/" do final da URL para facilitar a colagem das rotas
+    const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev";
 
-    async function buscar() {
+    // Função 1: Lida com a rota /hora
+    async function buscarHoraEFrase() {
       const status = document.getElementById("status");
       const fraseElemento = document.getElementById("frase-do-dia");
       const tituloElemento = document.getElementById("saudacao-titulo");
-
-      // Pegamos o valor que o usuário digitou no campo de texto
       const nomeDigitado = document.getElementById("input-nome").value;
 
       status.textContent = "Buscando...";
       fraseElemento.textContent = "";
 
       try {
-        // Montamos a nova URL anexando o nome digitado.
-        // O encodeURIComponent garante que espaços e acentos não quebrem a URL
-        const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
+        // Montamos a URL apontando para a ROTA /hora
+        const urlCompleta = `${URL_DO_WORKER}/hora?nome=${encodeURIComponent(nomeDigitado)}`;
 
-        // Fazemos a requisição para a nova URL
         const resposta = await fetch(urlCompleta);
         const dados = await resposta.json();
 
-        // Alteramos o <h1> com a mensagem personalizada que veio do Worker
         tituloElemento.textContent = dados.mensagem;
-
         status.textContent = "Hora do servidor: " + dados.horaDoServidor;
         fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
 
       } catch (erro) {
-        status.textContent = "Não consegui falar com o Worker. Confira a URL.";
+        status.textContent = "Erro na requisição. Confira a URL.";
       }
     }
 
-    document.getElementById("btn").addEventListener("click", buscar);
-    buscar();
+    // Função 2: Lida com a rota /sorteio
+    async function fazerSorteio() {
+      const resultadoElemento = document.getElementById("resultado-sorteio");
+      resultadoElemento.textContent = "Sorteando...";
+
+      try {
+        // Montamos a URL apontando para a ROTA /sorteio
+        const resposta = await fetch(`${URL_DO_WORKER}/sorteio`);
+        const dados = await resposta.json();
+
+        // Alteramos a tela para mostrar o número que chegou no JSON
+        resultadoElemento.textContent = `Número sorteado: ${dados.numero}`;
+
+      } catch (erro) {
+        resultadoElemento.textContent = "Erro ao buscar o sorteio.";
+      }
+    }
+
+    // Conectando cada botão à sua respectiva função
+    document.getElementById("btn-hora").addEventListener("click", buscarHoraEFrase);
+    document.getElementById("btn-sorteio").addEventListener("click", fazerSorteio);
+
+    // Inicia a página já buscando a hora padrão
+    buscarHoraEFrase();
   </script>
 </body>
 
