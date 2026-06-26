@@ -33,7 +33,7 @@
         const resposta = await fetch(URL_DO_WORKER);
         const dados = await resposta.json();
 
-        status.textContent = "Data e hora: " + dados.horaDoServidor;
+        status.textContent = dados.horaDoServidor;
 
         // Colocando a frase recebida do Worker na tela, incluindo o autor:
         fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
