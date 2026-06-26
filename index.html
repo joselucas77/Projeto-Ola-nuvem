@@ -35,8 +35,8 @@
 
         status.textContent = dados.mensagem + " | Hora do servidor: " + dados.horaDoServidor;
 
-        // Colocando a frase recebida do Worker na tela:
-        fraseElemento.textContent = `"${dados.fraseDoDia}"`;
+        // Colocando a frase recebida do Worker na tela, incluindo o autor:
+        fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
 
       } catch (erro) {
         status.textContent = "Não consegui falar com o Worker. Confira a URL.";
