@@ -1,51 +1,65 @@
-<main>
-  <!-- Adicionamos o id "saudacao-titulo" para podermos mudar esse texto -->
-  <h1 id="saudacao-titulo">Olá, Nuvem</h1>
-  <p id="status">Carregando a resposta do servidor...</p>
+<!DOCTYPE html>
+<html lang="pt-BR">
 
-  <p id="frase-do-dia"></p>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Olá, Nuvem</title>
+  <link rel="stylesheet" href="style.css">
+</head>
 
-  <!-- Novo campo de input para o usuário digitar o nome -->
-  <div class="controles">
-    <input type="text" id="input-nome" placeholder="Digite seu nome">
-    <button id="btn">Buscar</button>
-  </div>
-</main>
+<body>
+  <main>
+    <!-- Adicionamos o id "saudacao-titulo" para podermos mudar esse texto -->
+    <h1 id="saudacao-titulo">Olá, Nuvem</h1>
+    <p id="status">Carregando a resposta do servidor...</p>
 
-<script>
-  const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev/";
+    <p id="frase-do-dia"></p>
 
-  async function buscar() {
-    const status = document.getElementById("status");
-    const fraseElemento = document.getElementById("frase-do-dia");
-    const tituloElemento = document.getElementById("saudacao-titulo");
+    <!-- Novo campo de input para o usuário digitar o nome -->
+    <div class="controles">
+      <input type="text" id="input-nome" placeholder="Digite seu nome">
+      <button id="btn">Buscar</button>
+    </div>
+  </main>
 
-    // Pegamos o valor que o usuário digitou no campo de texto
-    const nomeDigitado = document.getElementById("input-nome").value;
+  <script>
+    const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev/";
 
-    status.textContent = "Buscando...";
-    fraseElemento.textContent = "";
+    async function buscar() {
+      const status = document.getElementById("status");
+      const fraseElemento = document.getElementById("frase-do-dia");
+      const tituloElemento = document.getElementById("saudacao-titulo");
 
-    try {
-      // Montamos a nova URL anexando o nome digitado.
-      // O encodeURIComponent garante que espaços e acentos não quebrem a URL
-      const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
+      // Pegamos o valor que o usuário digitou no campo de texto
+      const nomeDigitado = document.getElementById("input-nome").value;
 
-      // Fazemos a requisição para a nova URL
-      const resposta = await fetch(urlCompleta);
-      const dados = await resposta.json();
+      status.textContent = "Buscando...";
+      fraseElemento.textContent = "";
 
-      // Alteramos o <h1> com a mensagem personalizada que veio do Worker
-      tituloElemento.textContent = dados.mensagem;
+      try {
+        // Montamos a nova URL anexando o nome digitado.
+        // O encodeURIComponent garante que espaços e acentos não quebrem a URL
+        const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
 
-      status.textContent = "Hora do servidor: " + dados.horaDoServidor;
-      fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
+        // Fazemos a requisição para a nova URL
+        const resposta = await fetch(urlCompleta);
+        const dados = await resposta.json();
 
-    } catch (erro) {
-      status.textContent = "Não consegui falar com o Worker. Confira a URL.";
+        // Alteramos o <h1> com a mensagem personalizada que veio do Worker
+        tituloElemento.textContent = dados.mensagem;
+
+        status.textContent = "Hora do servidor: " + dados.horaDoServidor;
+        fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
+
+      } catch (erro) {
+        status.textContent = "Não consegui falar com o Worker. Confira a URL.";
+      }
     }
-  }
 
-  document.getElementById("btn").addEventListener("click", buscar);
-  buscar();
-</script>
+    document.getElementById("btn").addEventListener("click", buscar);
+    buscar();
+  </script>
+</body>
+
+</html>
