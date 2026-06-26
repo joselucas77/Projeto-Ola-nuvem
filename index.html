@@ -36,21 +36,18 @@
       try {
         const resposta = await fetch(URL_DO_WORKER);
 
-        // Tratamento de erro elegante:
+        // Se o Worker responder com 404 (ou qualquer erro), mandamos para a página 404
         if (!resposta.ok) {
-          // Se resposta.ok for false, significa que o status não é 200-299 (ex: deu 404)
-          status.textContent = "Ops! Rota não encontrada no servidor (Erro 404).";
-          return; // Encerra a função aqui, evitando que o código tente ler o JSON
+          window.location.href = "erro404.html";
+          return; // Para a execução do código aqui
         }
 
         const dados = await resposta.json();
-
         status.textContent = "Hora do servidor: " + dados.horaDoServidor;
         fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
 
       } catch (erro) {
-        // O catch captura erros de rede (ex: sem internet, CORS ou servidor offline)
-        status.textContent = "Erro de conexão. Verifique sua internet ou a URL.";
+        status.textContent = "Erro de conexão. Verifique a URL.";
       }
     }
 

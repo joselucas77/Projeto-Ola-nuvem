@@ -42,18 +42,15 @@
 
       try {
         const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
-
         const resposta = await fetch(urlCompleta);
 
-        // Tratamento de erro elegante:
+        // Se der erro na rota de sorteio, também mandamos para a página 404
         if (!resposta.ok) {
-          status.textContent = "Ops! Rota de sorteio não encontrada (Erro 404).";
-          resultadoElemento.textContent = "Tente novamente mais tarde.";
-          return; // Encerra a execução
+          window.location.href = "erro404.html";
+          return;
         }
 
         const dados = await resposta.json();
-
         tituloElemento.textContent = dados.mensagem;
         status.textContent = "Hora do servidor: " + dados.horaDoServidor;
         resultadoElemento.textContent = `Número sorteado: ${dados.numero}`;
