@@ -44,21 +44,28 @@
         const urlCompleta = `${URL_DO_WORKER}?nome=${encodeURIComponent(nomeDigitado)}`;
 
         const resposta = await fetch(urlCompleta);
+
+        // Tratamento de erro elegante:
+        if (!resposta.ok) {
+          status.textContent = "Ops! Rota de sorteio não encontrada (Erro 404).";
+          resultadoElemento.textContent = "Tente novamente mais tarde.";
+          return; // Encerra a execução
+        }
+
         const dados = await resposta.json();
 
-        // Atualiza a tela com os 3 dados: Saudação, Hora e Número
         tituloElemento.textContent = dados.mensagem;
         status.textContent = "Hora do servidor: " + dados.horaDoServidor;
         resultadoElemento.textContent = `Número sorteado: ${dados.numero}`;
 
       } catch (erro) {
-        status.textContent = "Erro na requisição. Confira a URL.";
-        resultadoElemento.textContent = "Erro ao buscar o sorteio.";
+        status.textContent = "Erro de conexão. Confira a URL.";
+        resultadoElemento.textContent = "Falha ao realizar o sorteio.";
       }
     }
 
     document.getElementById("btn-sorteio").addEventListener("click", fazerSorteio);
-    fazerSorteio(); // Faz uma busca inicial ao carregar a página
+    fazerSorteio(); 
   </script>
 </body>
 
