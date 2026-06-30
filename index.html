@@ -1,59 +1,67 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Olá, Nuvem - Frases</title>
+    <link rel="stylesheet" href="style.css" />
+  </head>
 
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Olá, Nuvem - Frases</title>
-  <link rel="stylesheet" href="style.css">
-</head>
+  <body>
+    <main>
+      <h1>Frase do Dia</h1>
+      <p id="status">Carregando a resposta do servidor...</p>
 
-<body>
-  <main>
-    <h1>Frase do Dia</h1>
-    <p id="status">Carregando a resposta do servidor...</p>
+      <p
+        id="contador-visitas"
+        style="font-size: 14px; color: #ffcccc; margin-top: -5px"
+      ></p>
 
-    <p id="frase-do-dia"></p>
+      <p id="frase-do-dia"></p>
 
-    <button id="btn-hora">Buscar Nova Frase</button>
+      <button id="btn-hora">Buscar Nova Frase</button>
 
-    <!-- Link para a página de sorteio -->
-    <div class="navegacao">
-      <a href="sorteio.html" class="link-pagina">Ir para Saudação e Sorteio ➔</a>
-    </div>
-  </main>
+      <div class="navegacao">
+        <a href="sorteio.html" class="link-pagina"
+          >Ir para Saudação e Sorteio ➔</a
+        >
+      </div>
+    </main>
 
-  <script>
-    const URL_DO_WORKER = "https://projeto-cloud-api.joselucasa937.workers.dev/hora";
+    <script>
+      const URL_DO_WORKER =
+        "https://projeto-cloud-api.joselucasa937.workers.dev/hora";
 
-    async function buscarFrase() {
-      const status = document.getElementById("status");
-      const fraseElemento = document.getElementById("frase-do-dia");
+      async function buscarFrase() {
+        const status = document.getElementById("status");
+        const fraseElemento = document.getElementById("frase-do-dia");
 
-      status.textContent = "Buscando...";
-      fraseElemento.textContent = "";
+        status.textContent = "Buscando...";
+        fraseElemento.textContent = "";
 
-      try {
-        const resposta = await fetch(URL_DO_WORKER);
+        try {
+          const resposta = await fetch(URL_DO_WORKER);
 
-        // Se o Worker responder com 404 (ou qualquer erro), mandamos para a página 404
-        if (!resposta.ok) {
-          window.location.href = "404.html";
-          return; // Para a execução do código aqui
+          // Se o Worker responder com 404 (ou qualquer erro), mandamos para a página 404
+          if (!resposta.ok) {
+            window.location.href = "404.html";
+            return;
+          }
+
+          const dados = await resposta.json();
+          status.textContent = "Hora do servidor: " + dados.horaDoServidor;
+          fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
+          document.getElementById("contador-visitas").textContent =
+            `Você é a visita nº ${dados.visitas}`;
+        } catch (erro) {
+          status.textContent = "Erro de conexão. Verifique a URL.";
         }
-
-        const dados = await resposta.json();
-        status.textContent = "Hora do servidor: " + dados.horaDoServidor;
-        fraseElemento.textContent = `"${dados.fraseDoDia}" — ${dados.autorDaFrase}`;
-
-      } catch (erro) {
-        status.textContent = "Erro de conexão. Verifique a URL.";
       }
-    }
 
-    document.getElementById("btn-hora").addEventListener("click", buscarFrase);
-    buscarFrase();
-  </script>
-</body>
-
+      document
+        .getElementById("btn-hora")
+        .addEventListener("click", buscarFrase);
+      buscarFrase();
+    </script>
+  </body>
 </html>
